@@ -1,0 +1,32 @@
+version: "3.8"
+services:
+  pgadmin4:
+    container_name: school-management-pdadmin4
+    image: dpage/pgadmin4
+    ports:
+      - 80:80
+    networks:
+      - school-management-db-network
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@gmail.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+    depends_on:
+      - school-management-db
+
+  school-management-db:
+    container_name: school-management-db
+    image: postgres:16
+    networks:
+      - school-management-db-network
+    volumes:
+      - ./school-management-db:/var/lib/postgresql
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: school-management-db
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: verySecret
+
+networks:
+  school-management-db-network:
+    name: school-management-db-network
