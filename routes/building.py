@@ -6,7 +6,7 @@ from dtos import *
 from dtos.object_mapper import to_building_info
 from models import get_db
 from models.models import Building
-from utils import exception_to_string, error_response, success_response
+from utils.utils import exception_to_string, error_response, success_response
 
 building_router = APIRouter()
 
@@ -36,14 +36,14 @@ async def get_building_by_id(building_id: int, db: Session = Depends(get_db)):
 
 @building_router.post(path="/", response_model=ResponseEntity[BuildingInfo])
 async def create_building(building: BuildingCreate, db: Session = Depends(get_db)):
-    try:
+    # try:
         new_building = Building(name=building.name, code=building.code)
         db.add(new_building)
         db.commit()
         db.refresh(new_building)
         return success_response(201, to_building_info(new_building))
-    except Exception as ex:
-        return error_response(500, exception_to_string(ex))
+    # except Exception as ex:
+    #     return error_response(500, exception_to_string(ex))
 
 
 @building_router.put(path="/{building_id}", response_model=ResponseEntity[BuildingInfo])

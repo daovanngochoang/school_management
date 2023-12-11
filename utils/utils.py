@@ -7,7 +7,7 @@ def exception_to_string(ex: Exception):
     if hasattr(ex, 'message'):
         msg = ex.message
     else:
-        msg = ex
+        msg = str(ex)
     return msg
 
 

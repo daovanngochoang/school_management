@@ -1,119 +1,98 @@
 from datetime import datetime
-from typing import Optional, List
+from typing import Optional, List, Union
 
 from pydantic import BaseModel
 
-from models import BorrowingStatus, Faculty, Gender
+from models import Faculty, Gender
 
 
 class BuildingUpdate(BaseModel):
-    name: Optional[str]
-    code: Optional[str]
+    name: Optional[str] = None
+    code: Optional[str] = None
 
 
 class BuildingCreate(BaseModel):
-    id: int
     name: str
     code: str
 
 
 class BuildingInfo(BaseModel):
-    id: int
-    name: str
-    code: str
-    rooms: List["RoomInfo"]
-    create_at: str
-    last_edited: str
+    id: Optional[int] = None
+    name: Optional[str] = None
+    code: Optional[str] = None
+    rooms: Optional[List["RoomInfo"]] = None
+    created_at: Optional[str] = None
+    last_edited: Optional[str] = None
 
 
 class RoomCreate(BaseModel):
     name: str
     code: str
-    status: BorrowingStatus
     building_id: int
     capacity: int
 
 
 class RoomUpdate(BaseModel):
-    name: Optional[str]
-    code: Optional[str]
-    status: Optional[BorrowingStatus]
-    building_id: Optional[int]
-    capacity: Optional[int]
+    name: Optional[str] = None
+    code: Optional[str] = None
+    building_id: Optional[int] = None
+    capacity: Optional[int] = None
 
 
 class RoomInfo(BaseModel):
-    id: int
-    name: str
-    code: str
-    status: BorrowingStatus
-    buildings: List["BuildingInfo"]
-    capacity: int
-    schedules: List["ScheduleInfo"]
+    id: Optional[int] = None
+    name: Optional[str] = None
+    code: Optional[str] = None
+    building: Optional["BuildingInfo"] = None
+    capacity: Optional[int] = None
+    reservations: Optional[List["RoomReservationInfo"]] = None
 
 
-class EquipmentUpdate(BaseModel):
-    name: Optional[str]
-    total_quantity: Optional[int]
-    broken_quantity: Optional[int]
-    code: Optional[str]
+class RoomReservationCreate(BaseModel):
+    room_id: Optional[int] = None
+    schedule_id: Optional[int] = None
+    lecturer_id: Optional[int] = None
+    date: Optional[str] = None
+    start_block: Optional[str] = None
+    end_block: Optional[str] = None
 
 
-class EquipmentInfo(BaseModel):
-    name: Optional[str]
-    total_quantity: Optional[int]
-    broken_quantity: Optional[int]
-    code: Optional[str]
-    created_at: str
-    last_edited: str
-    borrowed_equipments: List
+class RoomReservationUpdate(BaseModel):
+    room_id: Optional[int] = None
+    schedule_id: Optional[int] = None
+    lecturer_id: Optional[int] = None
+    date: Optional[str] = None
+    start_block: Optional[str] = None
+    end_block: Optional[str] = None
 
 
-class EquipmentCreate(BaseModel):
-    name: str
-    total_quantity: int
-    broken_quantity: int
-    code: str
-
-
-class EquipmentBorrowingCreate(BaseModel):
-    lecturer_id: int
-    equipment_id: int
-    start: datetime
-    end: datetime
-
-
-class EquipmentBorrowingUpdate(BaseModel):
-    lecturer_id: Optional[int]
-    equipment_id: Optional[int]
-    start: Optional[datetime]
-    end: Optional[datetime]
-
-
-class EquipmentBorrowingInfo(BaseModel):
-    id: int
-    lecturer: "LecturerInfo"
-    equipment: EquipmentInfo
-    start: datetime
-    end: datetime
-    created_at: str
-    last_edited: str
+class RoomReservationInfo(BaseModel):
+    id: Optional[int] = None
+    schedule: Optional['ScheduleInfo'] = None
+    room: Optional["RoomInfo"] = None
+    lecturer: Optional["LecturerInfo"] = None
+    date: Optional[str] = None
+    start_block: Optional[str] = None
+    end_block: Optional[str] = None
+    created_at: Optional[str] = None
+    last_edited: Optional[str] = None
 
 
 class LecturerInfo(BaseModel):
-    id: int
-    username: str
-    first_name: str
-    last_name: str
-    email: str
-    dob: datetime
-    gender: Gender
-    enabled: bool
-    active: bool
-    faculty: Faculty
-    schedules: List["ScheduleInfo"]
-    created_at: datetime
-    last_edited: datetime
+    id: Optional[int] = None
+    username: Optional[str] = None
+    first_name: Optional[str] = None
+    last_name: Optional[str] = None
+    email: Optional[str] = None
+    dob: Optional[str] = None
+    gender: Optional[str] = None
+    enabled: Optional[bool] = None
+    active: Optional[bool] = None
+    faculty: Optional[str] = None
+    schedules: Optional[List["ScheduleInfo"]] = None
+    reservations: Optional[List["RoomReservationInfo"]] = None
+    created_at: Optional[str] = None
+    last_edited: Optional[str] = None
 
 
 class LecturerAuth(BaseModel):
@@ -121,40 +100,57 @@ class LecturerAuth(BaseModel):
     password: str
 
 
+class TokenData(BaseModel):
+    username: Union[str, None] = None
+
+
+class AuthToken(BaseModel):
+    lecturer: LecturerInfo
+    access_token: str
+
+
+class LecturerCreate(BaseModel):
+    username: str
+    password: str
+    first_name: str
+    last_name: str
+    email: str
+    dob: str
+    faculty: Faculty
+    gender: Gender
+
+
 class LectureUpdate(BaseModel):
-    username: Optional[str]
-    password: Optional[str]
-    first_name: Optional[str]
-    last_name: Optional[str]
-    email: Optional[str]
-    dob: Optional[datetime]
-    faculty: Optional[Faculty]
-    gender: Optional[Gender]
+    username: Optional[str] = None
+    password: Optional[str] = None
+    first_name: Optional[str] = None
+    last_name: Optional[str] = None
+    email: Optional[str] = None
+    dob: Optional[datetime] = None
+    faculty: Optional[Faculty] = None
+    gender: Optional[Gender] = None
 
 
 class ScheduleInfo(BaseModel):
-    id: int
-    room: List["RoomInfo"]
-    lecturer: List["LecturerInfo"]
-    course: str
-    start: datetime
-    end: datetime
-    create_at: datetime
-    last_edited: datetime
+    id: Optional[int] = None
+    reservations: Optional[List["RoomReservationInfo"]] = None
+    lecturer: Optional["LecturerInfo"] = None
+    course: Optional[str] = None
+    start_block: Optional[str] = None
+    end_block: Optional[str] = None
+    created_at: Optional[str] = None
+    last_edited: Optional[str] = None
 
 
 class ScheduleCreate(BaseModel):
-    id: int
-    room_id: int
     lecturer_id: int
     course: str
-    start: datetime
-    end: datetime
+    start_block: str
+    end_block: str
 
 
 class ScheduleUpdate(BaseModel):
-    room_id: Optional[int]
-    lecturer_id: Optional[int]
-    course: Optional[str]
-    start: Optional[datetime]
-    end: Optional[datetime]
+    lecturer_id: Optional[int] = None
+    course: Optional[str] = None
+    start_block: Optional[str] = None
+    end_block: Optional[str] = None
