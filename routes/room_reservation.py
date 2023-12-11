@@ -15,15 +15,15 @@ room_reservation_router = APIRouter()
 
 @room_reservation_router.get(path="/", response_model=ResponseEntity[List[RoomReservationInfo]])
 async def get_reservations(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
-    # try:
+    try:
         reservations = db.query(RoomReservation).offset(skip).limit(limit).all()
         return success_response(
             200,
             [to_room_reservation(reservation) for reservation in reservations]
         )
 
-    # except Exception as ex:
-    #     return error_response(500, exception_to_string(ex))
+    except Exception as ex:
+        return error_response(500, exception_to_string(ex))
 
 
 @room_reservation_router.post(path="/", response_model=ResponseEntity[List[RoomReservationInfo]])

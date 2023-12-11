@@ -12,7 +12,7 @@ auth_router = APIRouter()
 
 @auth_router.post(path="/token", response_model=dict)
 async def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
-    # try:
+    try:
         lecturer: Optional[Lecturer] = db.query(Lecturer).filter(Lecturer.username == form_data.username).first()
         if lecturer is None:
             return error_response(
@@ -36,8 +36,8 @@ async def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = 
             )
         }
 
-    # except Exception as ex:
-    #     return error_response(500, exception_to_string(ex))
+    except Exception as ex:
+        return error_response(500, exception_to_string(ex))
 
 
 @auth_router.post("/register", response_model=ResponseEntity[LecturerInfo])
