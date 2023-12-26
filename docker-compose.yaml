@@ -6,18 +6,19 @@ services:
     ports:
       - 80:80
     networks:
-      - school-management-db-network
+      - school-management-network
     environment:
       PGADMIN_DEFAULT_EMAIL: admin@gmail.com
       PGADMIN_DEFAULT_PASSWORD: admin
     depends_on:
-      - school-management-db
+      school-management-db:
+        condition: service_healthy
 
   school-management-db:
     container_name: school-management-db
     image: postgres:16
     networks:
-      - school-management-db-network
+      - school-management-network
     volumes:
       - ./school-management-db:/var/lib/postgresql
     ports:
@@ -26,7 +27,25 @@ services:
       POSTGRES_DB: school-management-db
       POSTGRES_USER: admin
       POSTGRES_PASSWORD: verySecret
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  school-management-backend:
+    container_name: school-management-backend
+    build: .
+    ports:
+      - "8080:8080"
+    env_file:
+      - .env
+    depends_on:
+      school-management-db:
+        condition: service_healthy
+    networks:
+      - school-management-network
 
 networks:
-  school-management-db-network:
-    name: school-management-db-network
+  school-management-network:
+    name: school-management-network
