@@ -8,6 +8,8 @@ settings: Settings = settings
 engine = create_engine(
     settings.SQLALCHEMY_DATABASE_URI.__str__()
 )
+
+print("DATABASE URL: "+settings.SQLALCHEMY_DATABASE_URI.__str__())
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 Base = declarative_base()
 
